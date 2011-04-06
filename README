@@ -16,7 +16,7 @@ Test fixture, setUp() and tearDown() for tests are defined in features/terrain.p
 It's recommended to store locators in separate .cfg file. You can after call LocatorsParser().parse_locators(file, sections) to parse the locators file. For example, you want to create page object for SearchPage. You create directory pages/searcpage and define SearchPage class in __init__py. You also make "from framework.pages import LocatorsParser". In constructor of your class you just call parse_locators() method.
 
     == Access to Selenium instance ==
-In most Page-Object pattern you pass selenium instance as an argument to page class constructor. And you access it like "self.selenium". In PyCrescent, you otherwise pass "world" as an argument to page class constructor. Thus, access to Selenium is like "self.world.selenium".
+In most Page-Object pattern you pass selenium instance as an argument to page class constructor. And you access it like "self.selenium". In Crescent, you otherwise pass "world" as an argument to page class constructor. Thus, access to Selenium is like "self.world.selenium".
 
     == Examples ==
 That's just a development version, coming soon.
