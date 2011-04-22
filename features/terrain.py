@@ -4,33 +4,31 @@ We configure there setUp() and tearDown()
 and also some useful methods and attributes."""
 from lettuce import world
 from lettuce.terrain import before, after
+from framework import SeleniumStart
 from framework.system import System
-from selenium import selenium
 from time import time
+from unittest2 import TestCase
+
+@before.all
+def __init__():
+    """Gets system configuration."""
+    world.system = System()
 
 @before.each_scenario
 def setUp(scenario):
     """Sets up the test fixture before exercising it."""
-    # initialize Selenium RC
-    world.system = System()
-    world.selenium = selenium(world.system.selenium_conf['hostname'],
-                              world.system.selenium_conf['port'],
-                              world.system.selenium_conf['browser'],
-                              world.system.base_url)
-    world.selenium.start()
+    # initialize system
+    configuration = world.system.selenium_conf
+    configuration['base-url'] = world.system.base_url
+    world.s = SeleniumStart(configuration)
     # initialize attributes
-    world.selenium.timestamp = int(time())
-    world.selenium.timeout = 30000
-    # initialize methods
-    world.selenium.click_and_wait = click_and_wait
+    world.s.timestamp = int(time())
+    world.verificationErrors = []
 
 @after.each_scenario
 def tearDown(scenario):
     """Deconstructs the test fixture after testing it."""
     # stop Selenium RC
-    world.selenium.stop()
-
-def click_and_wait(locator, timeout):
-    """Clicks locator and automatically waits for page to load."""
-    world.selenium.click(locator)
-    world.selenium.wait_for_page_to_load(timeout)
+    world.s.stop()
+    # assert results
+    TestCase(None).assertEqual([], world.verificationErrors)

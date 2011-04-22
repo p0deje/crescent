@@ -9,23 +9,23 @@ class System:
         file = open('framework/system/system.cfg')
         self._settings.readfp(file)
         # get system under test information
-        self._sut = self._settings.get('System', 'Name')
+        self._sut = self._settings.get('system', 'name')
         # get Selenium RC configuration
         self._selenium_conf = {}
-        for conf in self._settings.options('Selenium'):
-            self._selenium_conf[conf] = self._settings.get('Selenium', conf) 
+        for conf in self._settings.options('selenium'):
+            self._selenium_conf[conf] = self._settings.get('selenium', conf)
         # get server information
-        self._protocol = self._settings.get('Server', 'Protocol')
-        self._hostname = self._settings.get('Server', 'Hostname')
-        self._port = self._settings.get('Server', 'Port')
+        self._protocol = self._settings.get('server', 'protocol')
+        self._hostname = self._settings.get('server', 'hostname')
+        self._port = self._settings.get('server', 'port')
         # get HTTP authorization information
         self._http_auth = {}
-        self._http_auth['username'] = self._settings.get('HTTP-Auth', 'Username')
-        self._http_auth['password'] = self._settings.get('HTTP-Auth', 'password')
+        self._http_auth['username'] = self._settings.get('http-auth', 'username')
+        self._http_auth['password'] = self._settings.get('http-auth', 'password')
 
     @property
     def sut(self):
-        """Returns the name of system under test"""
+        """Returns the name of system under test."""
         return self._sut
 
     @property
