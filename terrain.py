@@ -4,10 +4,10 @@ We configure there setUp() and tearDown()
 and also some useful methods and attributes."""
 from lettuce import world
 from lettuce.terrain import before, after
-from framework import SeleniumStart
 from framework.system import System
 from time import time
 from unittest2 import TestCase
+import framework
 
 @before.all
 def __init__():
@@ -20,7 +20,7 @@ def setUp(scenario):
     # initialize system
     configuration = world.system.selenium_conf
     configuration['base-url'] = world.system.base_url
-    world.s = SeleniumStart(configuration)
+    world.s = framework.SeleniumStart(configuration)
     # initialize attributes
     world.s.timestamp = int(time())
     world.verificationErrors = []
@@ -31,4 +31,4 @@ def tearDown(scenario):
     # stop Selenium RC
     world.s.stop()
     # assert results
-    TestCase(None).assertEqual([], world.verificationErrors)
+    framework.verifyEqual([], world.verificationErrors)
