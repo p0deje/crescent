@@ -1,19 +1,34 @@
+# -*- coding: utf-8 -*-
 from ConfigParser import RawConfigParser
 
-class LocatorsParser(object):
-    def parse_locators(self, file, *sections):
-        """Parses locators configuration file and
-        returns dictionary of locators.
+def parse_locators(file):
+    """Parses locators configuration file and
+    returns dictionary of locators.
 
-        Arguments:
-        file = locators file object (opened with open() method)
-        sections = tuple of sections in locators file
-        """
-        locators = {}
-        parser = RawConfigParser()
-        parser.readfp(file)
+    Arguments:
+    file = locators file object (opened with open() method)
+
+    Return:
+    Dictionary of parsed locators."""
+    # parse file
+    parser = RawConfigParser()
+    parser.readfp(file)
+    # get sections from file
+    sections = parser.sections()
+    # prepare locators dictionary
+    locators = {}
+    # don't add sections name
+    # when only one section exists
+    if len(sections) is 1:
+        section = sections[0]
+        for name in parser.options(section):
+            locators[name] = parser.get(section, name)
+    # add section name as a key
+    # when more than one section exists
+    else:
         for section in sections:
-            print section
+            locators[section] = {}
             for name in parser.options(section):
-                locators[name] = parser.get(section, name)
-        return locators
+                locators[section][name] = parser.get(section, name)
+    # return dictionary of parsed locators
+    return locators

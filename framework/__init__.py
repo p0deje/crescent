@@ -1,42 +1,59 @@
+# -*- coding: utf-8 -*-
 from selenium import selenium
+from selenium import webdriver
 from unittest2 import TestCase
 from lettuce import world
 
-class SeleniumStart(object):
-    def __init__(self, configuration):
-        if configuration['version'] == 1:
-            self._start_selenium_rc(configuration)
-        elif configuration['version'] == 2:
-            self._start_selenium_webdriver(configuration)
-        else:
-            error = 'Selenium version is not set.'
-            error += 'Check you system.cfg confiugraion file'
-            raise RuntimeError, error
+def start_selenium(configuration):
+    """Starts Selenium session.
 
-    def _start_selenium_rc(self, configuration):
-        """Starts Selenium RC connection."""
+    Arguments:
+    configuration - dictionary of Selenium configuration settings.
+
+    Return:
+    Selenium instance."""
+    # get version
+    version = int(configuration['version'])
+    # if version is 1, start Selenium RC
+    if version == 1:
         s = selenium(configuration['hostname'],
                      configuration['port'],
                      configuration['browser'],
                      configuration['base-url'])
-        return s.start()
+        s.start()
+    # if version is 2, start Selenium Webdriver
+    elif version == 2:
+        # initialize correct browser
+        browser = configuration['browser'].lower()
+        if browser == 'firefox':
+            s = webdriver.Firefox()
+        elif browser == 'chrome':
+            s = webdriver.Chrome()
+        elif browser == 'ie':
+            s = webdriver.Ie()
+        else:
+            error = "Unknown browser. Can't start Webdriver session."
+            raise RuntimeError, error
+    # otherwise raise error
+    else:
+        error = 'Selenium version is not set. Check you system.cfg file.'
+        raise RuntimeError, error
+    return s
 
-    def _start_selenium_webdriver(self, configuration):
-        pass
+def verify_equal(expected, actual, msg=None):
+    """Softly asserts that two values are equal."""
+    try: TestCase(None).assertEqual(expected, actual, msg)
+    except AssertionError, e: world.verification_errors.append(str(e))
 
+def verify_true(expr, msg=None):
+    """Softly asserts that expression is True."""
+    try: TestCase(None).assertTrue(expr, msg)
+    except AssertionError, e: world.verification_errors.append(str(e))
 
-class SoftAsserts(object):
-    def verifyEqual(expected, actual, msg=None):
-        try: TestCase(None).assertEqual(expected, actual, msg)
-        except AssertionError, e: world.verificationErrors.append(e)
-
-    def verifyTrue(expr, msg=None):
-        try: TestCase(None).assertTrue(expr, msg)
-        except AssertionError, e: world.verificationErrors.append(e)
-
-    def verifyTrue(expr, msg=None):
-        try: TestCase(None).assertTrue(expr, msg)
-        except AssertionError, e: world.verificationErrors.append(e)
+def verify_false(expr, msg=None):
+    """Softly asserts that expression is False."""
+    try: TestCase(None).assertTrue(expr, msg)
+    except AssertionError, e: world.verification_errors.append(str(e))
 
 
 class SeleniumRCExtensions(object):
@@ -46,5 +63,5 @@ class SeleniumRCExtensions(object):
 
     def click_and_wait(self, locator, timeout):
         """Clicks locator and automatically waits for page to load."""
-        self.selenium.selenium.click(locator)
-        self.selenium.selenium.wait_for_page_to_load(timeout)
+        self.selenium.click(locator)
+        self.selenium.wait_for_page_to_load(timeout)
